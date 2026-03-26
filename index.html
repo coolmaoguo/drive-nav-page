@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="DRIVE-Nav: Directional Reasoning, Inspection, and Verification for Efficient Open-Vocabulary Navigation">
+  <meta name="keywords" content="DRIVE-Nav, Open-Vocabulary, Object Navigation, OVON, Embodied AI, Vision-Language, FMM">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DRIVE-Nav</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/js/bulma-slider.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+    }
+
+    .footer .icon-link {
+      font-size: 25px;
+      color: #000;
+    }
+
+    .link-block a {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    .teaser .hero-body {
+      padding-top: 0;
+      padding-bottom: 3rem;
+    }
+
+    .teaser {
+      font-family: 'Google Sans', sans-serif;
+    }
+
+    .publication-banner {
+      max-height: parent;
+    }
+
+    .publication-banner video {
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+      object-fit: fit;
+    }
+
+    .publication-title {
+      font-family: 'Google Sans', sans-serif;
+    }
+
+    .publication-authors {
+      font-family: 'Google Sans', sans-serif;
+    }
+
+    .publication-venue {
+      color: #555;
+      width: fit-content;
+      font-weight: bold;
+    }
+
+    .publication-awards {
+      color: #ff3860;
+      width: fit-content;
+      font-weight: bolder;
+    }
+
+    .publication-authors a {
+      color: hsl(204, 86%, 53%) !important;
+    }
+
+    .publication-authors a:hover {
+      text-decoration: underline;
+    }
+
+    .author-block {
+      display: inline-block;
+    }
+
+    .publication-video {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%;
+      overflow: hidden;
+      border-radius: 10px !important;
+    }
+
+    .publication-video iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .results-carousel {
+      overflow: hidden;
+    }
+
+    .results-carousel .item {
+      margin: 5px;
+      overflow: hidden;
+      border: 1px solid #bbb;
+      border-radius: 10px;
+      padding: 0;
+      font-size: 0;
+    }
+
+    .results-carousel video {
+      margin: 0;
+    }
+
+    .demo-player video {
+      width: 100%;
+      border-radius: 12px;
+      background: #000;
+      display: block;
+    }
+
+    .demo-selector {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .demo-button {
+      border: 1px solid #c8c8c8;
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 14px;
+      text-align: left;
+      cursor: pointer;
+      min-width: 190px;
+      transition: all 0.2s ease;
+    }
+
+    .demo-button:hover {
+      border-color: hsl(204, 86%, 53%);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .demo-button.is-active {
+      border-color: hsl(204, 86%, 53%);
+      background: rgba(50, 115, 220, 0.08);
+    }
+
+    .demo-button-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #222;
+    }
+
+    .demo-button-subtitle {
+      color: #666;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 768px) {
+      .demo-selector {
+        flex-direction: column;
+      }
+
+      .demo-button {
+        width: 100%;
+      }
+    }
+
+    .interpolation-panel {
+      background: #f5f5f5;
+      border-radius: 10px;
+    }
+
+    .interpolation-panel .interpolation-image {
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    .interpolation-panel .slider {
+      margin: 0 !important;
+    }
+
+    #interpolation-image-wrapper {
+      width: 100%;
+    }
+
+    #interpolation-image-wrapper img {
+      border-radius: 5px;
+    }
+
+    .dot {
+      height: 10px;
+      width: 10px;
+      margin: 0 5px;
+      background-color: #bbb;
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .dot.active {
+      background-color: #363636;
+    }
+
+    .dot:hover {
+      background-color: #888;
+    }
+  </style>
+</head>
+
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            <span style="font-size: inherit;">DRIVE-Nav:</span>
+            <span style="font-size: 2.5rem;">Directional Reasoning, Inspection, and Verification for Efficient Open-Vocabulary Navigation</span>
+          </h1>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- arXiv Link -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv (Coming Soon)</span>
+                </a>
+              </span>
+              <!-- Code Link -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code (Coming Soon)</span>
+                </a>
+              </span>
+              <!-- Demo Link -->
+              <span class="link-block">
+                <a href="#demos-video"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Demo</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- Abstract -->
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <div class="has-text-left">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Open-Vocabulary Object Navigation (OVON) requires an embodied agent to locate a language-specified target in unknown environments. Existing zero-shot methods often reason over dense frontier points under incomplete observations, causing unstable route selection, repeated revisits, and unnecessary action overhead. We present <b>DRIVE-Nav</b>, a structured framework that organizes exploration around <b>persistent directions</b> rather than raw frontiers. By inspecting encountered directions more completely and restricting subsequent decisions to still-relevant directions within a forward 240&deg; view range, DRIVE-Nav reduces redundant revisits and improves path efficiency. The framework extracts and tracks directional candidates from <b>weighted Fast Marching Method (FMM) paths</b>, maintains representative views for semantic inspection, and combines <b>vision–language-guided prompt enrichment</b> with <b>cross-frame verification</b> to improve grounding reliability. Experiments on HM3D-OVON, HM3Dv2, and MP3D demonstrate strong overall performance and consistent efficiency gains. On HM3D-OVON, DRIVE-Nav achieves <b>50.2% SR and 32.56% SPL</b>, improving the previous best method by 1.9% SR and 5.56% SPL. It also delivers the best SPL on HM3Dv2 and MP3D and transfers to a physical humanoid robot. Real-world deployment also demonstrates its effectiveness.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+    <br>
+
+    <!-- Method Framework -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-six-fifths">
+        <h2 class="title is-3" style="text-align: left;">Method Framework</h2>
+        <div class="content has-text-justified">
+          <p>
+            <b>DRIVE-Nav framework</b> integrates three core modules: (1) <b>Directional Reasoning</b> — at decision corners, the agent extracts directionally consistent exits from path–circle intersections using FMM. (2) <b>Adaptive Inspection</b> — candidate exits are inspected through snapshot maintenance that keeps visual evidence aligned with evolving frontier geometry. (3) <b>Verification</b> — a Qwen3-VL-guided prompt enhancement module and an iterative segmentation–verification loop suppress open-vocabulary false positives through multi-round reasoning.
+          </p>
+        </div>
+        <!-- TODO: Replace with your method/framework figure -->
+        <img id="model" width="100%" src="static/images/framework.png">
+
+        <br>
+        <br>
+      </div>
+    </div>
+
+    <br>
+
+    <!-- Simulation Experiments -->
+    <div class="columns is-centered">
+      <div class="column is-six-fifths">
+        <h2 class="title is-3" style="text-align: left;">Simulation Experiments</h2>
+        <div class="content has-text-justified">
+          <p>
+            Comparison with state-of-the-art methods on HM3D-OVON, HM3Dv2, and MP3D.
+            <b>Bold</b> indicates the best result. DRIVE-Nav achieves the highest SR and SPL
+            on HM3D-OVON and MP3D, and the best SPL on HM3Dv2.
+          </p>
+        </div>
+
+        <div style="overflow-x: auto;">
+        <table class="table is-bordered is-striped is-hoverable is-fullwidth" style="font-size: 0.9rem;">
+          <thead>
+            <tr>
+              <th rowspan="2">Method</th>
+              <th rowspan="2">Venue</th>
+              <th rowspan="2">Training-free</th>
+              <th colspan="2" style="text-align:center;">HM3D-OVON</th>
+              <th colspan="2" style="text-align:center;">HM3Dv2</th>
+              <th colspan="2" style="text-align:center;">MP3D</th>
+            </tr>
+            <tr>
+              <th>SR&uarr;</th>
+              <th>SPL&uarr;</th>
+              <th>SR&uarr;</th>
+              <th>SPL&uarr;</th>
+              <th>SR&uarr;</th>
+              <th>SPL&uarr;</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>SemExp</td><td>NeurIPS'20</td><td>&times;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>36.0</td><td>14.4</td></tr>
+            <tr><td>PONI</td><td>CVPR'22</td><td>&times;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>31.8</td><td>12.1</td></tr>
+            <tr><td>ZSON</td><td>NeurIPS'22</td><td>&times;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>15.3</td><td>4.8</td></tr>
+
+            <tr><td colspan="9" style="background:#f5f5f5; height:2px; padding:0;"></td></tr>
+
+            <tr><td>CoW</td><td>CVPR'23</td><td>&check;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>7.4</td><td>3.7</td></tr>
+            <tr><td>ESC</td><td>ICML'23</td><td>&check;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>28.7</td><td>11.2</td></tr>
+            <tr><td>ActPept</td><td>RAL'24</td><td>&check;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>39.8</td><td>17.4</td></tr>
+            <tr><td>UniGoal</td><td>CVPR'25</td><td>&check;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>41.0</td><td>16.4</td></tr>
+            <tr><td>OpenFMNav</td><td>NAACL-F'24</td><td>&check;</td><td>–</td><td>–</td><td>–</td><td>–</td><td>37.2</td><td>15.7</td></tr>
+            <tr><td>L3MVN</td><td>IROS'23</td><td>&check;</td><td>–</td><td>–</td><td>36.3</td><td>15.7</td><td>–</td><td>–</td></tr>
+            <tr><td>InstructNav</td><td>CoRL'24</td><td>&check;</td><td>–</td><td>–</td><td>58.0</td><td>20.9</td><td>–</td><td>–</td></tr>
+            <tr><td>SG-Nav</td><td>NeurIPS'24</td><td>&check;</td><td>–</td><td>–</td><td>49.6</td><td>25.5</td><td>40.2</td><td>16.0</td></tr>
+            <tr><td>VLFM</td><td>ICRA'24</td><td>&check;</td><td>–</td><td>–</td><td>63.6</td><td>32.5</td><td>36.4</td><td>17.5</td></tr>
+            <tr><td>ApexNav</td><td>RAL'25</td><td>&check;</td><td>–</td><td>–</td><td><b>76.2</b></td><td>38.0</td><td>39.2</td><td>17.8</td></tr>
+
+            <tr><td colspan="9" style="background:#f5f5f5; height:2px; padding:0;"></td></tr>
+
+            <tr><td>DAgger</td><td>CVPR'22</td><td>&times;</td><td>10.2</td><td>4.7</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>DAgRL</td><td>CVPR'22</td><td>&times;</td><td>18.3</td><td>7.9</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>DAgRL+OD</td><td>CVPR'23</td><td>&times;</td><td>37.1</td><td>19.9</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>RL</td><td>IROS'24</td><td>&times;</td><td>18.6</td><td>7.5</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>Uni-NaVid</td><td>RSS'25</td><td>&times;</td><td>39.5</td><td>19.8</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>MTU3D</td><td>ICCV'25</td><td>&times;</td><td>40.8</td><td>12.1</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>VLFM</td><td>ICRA'24</td><td>&check;</td><td>35.2</td><td>19.6</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>TANGO</td><td>CVPR'25</td><td>&check;</td><td>35.5</td><td>19.5</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+            <tr><td>MSGNav</td><td>CVPR'26</td><td>&check;</td><td>48.3</td><td>27.0</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+
+            <tr style="background-color: #fff3cd;">
+              <td><b>DRIVE-Nav (Ours)</b></td>
+              <td><b>Ours</b></td>
+              <td>&check;</td>
+              <td><b>50.2</b></td>
+              <td><b>32.56</b></td>
+              <td>72.43</td>
+              <td><b>41.34</b></td>
+              <td><b>41.83</b></td>
+              <td><b>22.63</b></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+
+        <br>
+        <br>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- Simulation Demos -->
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-six-fifths">
+        <h2 id="demos-video" class="title is-3" style="text-align: left;">Simulation Demos</h2>
+        <div class="content has-text-justified">
+          <p>
+            <b>The agent efficiently explores unseen indoor environments with directional reasoning
+            and iterative verification, and successfully locates target objects specified by
+            open-vocabulary language descriptions.</b>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HM3D-OVON -->
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <h3 class="title is-4" style="text-align: center;">HM3D-OVON</h3>
+        <video id="ovon-video" width="100%" controls autoplay muted loop playsinline>
+          <source src="static/videos/OVON/episode=267-ckpt=0-success=1.00-num_steps=139.00-target_detected=1.00-stop_called=1.00-debug.mp4" type="video/mp4">
+        </video>
+        <div style="text-align: center; margin-top: 12px;" id="ovon-dots"></div>
+        <br>
+      </div>
+    </div>
+
+    <!-- HM3Dv2 -->
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <h3 class="title is-4" style="text-align: center;">HM3Dv2</h3>
+        <video id="hm3dv2-video" width="100%" controls autoplay muted loop playsinline>
+          <source src="static/videos/HM3Dv2/episode=2-ckpt=0-success=1.00-num_steps=46.00-target_detected=1.00-stop_called=1.00-debug.mp4" type="video/mp4">
+        </video>
+        <div style="text-align: center; margin-top: 12px;" id="hm3dv2-dots"></div>
+        <br>
+      </div>
+    </div>
+
+    <!-- MP3D -->
+    <div class="columns is-centered">
+      <div class="column is-full">
+        <h3 class="title is-4" style="text-align: center;">MP3D</h3>
+        <video id="mp3d-video" width="100%" controls autoplay muted loop playsinline>
+          <source src="static/videos/MP3D/episode=0-ckpt=0-success=1.00-num_steps=56.00-target_detected=1.00-stop_called=1.00-debug.mp4" type="video/mp4">
+        </video>
+        <div style="text-align: center; margin-top: 12px;" id="mp3d-dots"></div>
+        <br>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- Real-World Deployment -->
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-six-fifths">
+        <h2 class="title is-3" style="text-align: left;">Real-World Deployment</h2>
+        <div class="content has-text-justified">
+          <p>
+            <b>We deploy DRIVE-Nav on a physical humanoid robot and demonstrate its capability
+            to efficiently navigate to target objects in real-world environments, without any
+            prior knowledge of the surroundings.</b>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+
+        <div class="publication-video">
+          <iframe id="real-demo-iframe"
+                  src="https://www.youtube.com/embed/EyWRwhv_RR4?autoplay=1&mute=1&loop=1&playlist=EyWRwhv_RR4"
+                  title="Real-World Demo"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="demo-selector" style="margin-top: 16px;">
+          <button class="demo-button is-active" onclick="switchRealDemo(0, this)">
+            <div class="demo-button-title">Elevator</div>
+          </button>
+          <button class="demo-button" onclick="switchRealDemo(1, this)">
+            <div class="demo-button-title">Fire Extinguisher</div>
+          </button>
+          <button class="demo-button" onclick="switchRealDemo(2, this)">
+            <div class="demo-button-title">Vending Machine</div>
+          </button>
+          <button class="demo-button" onclick="switchRealDemo(3, this)">
+            <div class="demo-button-title">Plant</div>
+          </button>
+          <button class="demo-button" onclick="switchRealDemo(4, this)">
+            <div class="demo-button-title">Toilet</div>
+          </button>
+        </div>
+
+        <br>
+        <br>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- BibTeX -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{drivenav2025,
+  title={DRIVE-Nav: Directional Reasoning, Inspection, and Verification for Efficient Open-Vocabulary Navigation},
+  year={2025}
+}</code></pre>
+  </div>
+</section>
+
+
+<!-- Acknowledgement -->
+<section class="section" id="Acknowledgement">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Acknowledgement</h2>
+    <p>
+      This website is adapted from <a
+      href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>, licensed under a <a rel="license"
+                                          href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+      Commons Attribution-ShareAlike 4.0 International License</a>.
+    </p>
+  </div>
+</section>
+
+
+<script>
+var datasets = {
+  ovon: [
+    'static/videos/OVON/episode=267-ckpt=0-success=1.00-num_steps=139.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/OVON/episode=546-ckpt=0-success=1.00-num_steps=129.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/OVON/episode=1753-ckpt=0-success=1.00-num_steps=117.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/OVON/episode=2229-ckpt=0-success=1.00-num_steps=125.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/OVON/episode=3382-ckpt=0-success=1.00-num_steps=75.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/OVON/episode=3604-ckpt=0-success=1.00-num_steps=144.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/OVON/episode=4533-ckpt=0-success=1.00-num_steps=138.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/OVON/episode=5863-ckpt=0-success=1.00-num_steps=115.00-target_detected=1.00-stop_called=1.00-debug.mp4'
+  ],
+  hm3dv2: [
+    'static/videos/HM3Dv2/episode=2-ckpt=0-success=1.00-num_steps=46.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/HM3Dv2/episode=4-ckpt=0-success=1.00-num_steps=96.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/HM3Dv2/episode=14-ckpt=0-success=1.00-num_steps=44.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/HM3Dv2/episode=14-ckpt=0-success=1.00-num_steps=104.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/HM3Dv2/episode=16-ckpt=0-success=1.00-num_steps=43.00-target_detected=1.00-stop_called=1.00-debug.mp4'
+  ],
+  mp3d: [
+    'static/videos/MP3D/episode=0-ckpt=0-success=1.00-num_steps=56.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/MP3D/episode=1-ckpt=0-success=1.00-num_steps=132.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/MP3D/episode=2-ckpt=0-success=1.00-num_steps=106.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/MP3D/episode=21-ckpt=0-success=1.00-num_steps=57.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/MP3D/episode=30-ckpt=0-success=1.00-num_steps=81.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/MP3D/episode=57-ckpt=0-success=1.00-num_steps=53.00-target_detected=1.00-stop_called=1.00-debug.mp4',
+    'static/videos/MP3D/episode=130-ckpt=0-success=1.00-num_steps=40.00-target_detected=1.00-stop_called=1.00-debug.mp4'
+  ]
+};
+
+var realDemoVideos = [
+  'EyWRwhv_RR4',
+  'UqcZgCwLNi4',
+  '9qUTGQSRE-w',
+  'e21Gxomg5ys',
+  'F3Y-oiybiDg'
+];
+
+function buildDots(containerId, datasetKey) {
+  var container = document.getElementById(containerId);
+  var videos = datasets[datasetKey];
+  for (var i = 0; i < videos.length; i++) {
+    var dot = document.createElement('span');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('data-dataset', datasetKey);
+    dot.setAttribute('data-index', i);
+    dot.onclick = function() {
+      var ds = this.getAttribute('data-dataset');
+      var idx = parseInt(this.getAttribute('data-index'));
+      switchDatasetVideo(ds, idx);
+    };
+    container.appendChild(dot);
+  }
+}
+
+function switchDatasetVideo(datasetKey, idx) {
+  var videoId = {ovon: 'ovon-video', hm3dv2: 'hm3dv2-video', mp3d: 'mp3d-video'}[datasetKey];
+  var dotsId = {ovon: 'ovon-dots', hm3dv2: 'hm3dv2-dots', mp3d: 'mp3d-dots'}[datasetKey];
+  var video = document.getElementById(videoId);
+  video.src = datasets[datasetKey][idx];
+  video.play();
+  var dots = document.getElementById(dotsId).querySelectorAll('.dot');
+  dots.forEach(function(d) { d.classList.remove('active'); });
+  dots[idx].classList.add('active');
+}
+
+function switchRealDemo(idx, btn) {
+  var id = realDemoVideos[idx];
+  var iframe = document.getElementById('real-demo-iframe');
+  iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&mute=1&loop=1&playlist=' + id;
+  var buttons = document.querySelectorAll('.demo-button');
+  buttons.forEach(function(b) { b.classList.remove('is-active'); });
+  if (btn) btn.classList.add('is-active');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildDots('ovon-dots', 'ovon');
+  buildDots('hm3dv2-dots', 'hm3dv2');
+  buildDots('mp3d-dots', 'mp3d');
+});
+</script>
+
+</body>
+</html>
